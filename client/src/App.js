@@ -1,59 +1,30 @@
-import styled, { ThemeProvider } from "styled-components";
-import { lightTheme } from "./utils/Themes";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import { useState } from "react";
-import Authentication from "./pages/Authentication";
-import ShopListing from "./pages/ShopListing";
-import Favourite from "./pages/Favourite";
-import Cart from "./pages/Cart";
-import ProductDetails from "./pages/ProductDetails";
-import { useDispatch, useSelector } from "react-redux";
-import ToastMessage from "./components/ToastMessage";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Home, NotFound } from './Components/default';
+import { Box } from '@mui/material'
 
-const Container = styled.div`
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: ${({ theme }) => theme.bg};
-  color: ${({ theme }) => theme.text_primary};
-  overflow-x: hidden;
-  overflow-y: hidden;
-  transition: all 0.2s ease;
-`;
+//components
+import Header from './Components/Header/Header';
+import DetailView from './Components/ItemDetails/DetailView';
+import TemplateProvider from './templates/TemplateProvider';
+import ContextProvider from './context/ContextProvider';
+import Cart from './Components/Cart/Cart';
 
-/**
- * The main application component that renders the entire app.
- *
- * @return {JSX.Element} The JSX element representing the app.
- */
 function App() {
-  const { currentUser } = useSelector((state) => state.user);
-  const { open, message, severity } = useSelector((state) => state.user);
-  const [openAuth, setOpenAuth] = useState(false);
   return (
-    <ThemeProvider theme={lightTheme}>
-      <BrowserRouter>
-        <Container>
-          <Navbar setOpenAuth={setOpenAuth} currentUser={currentUser} />
-          <Routes>
-            <Route path="/" exact element={<Home />} />
-            <Route path="/shop" exact element={<ShopListing />} />
-            <Route path="/favorite" exact element={<Favourite />} />
-            <Route path="/cart" exact element={<Cart />} />
-            <Route path="/shop/:id" exact element={<ProductDetails />} />
-          </Routes>
-          {openAuth && (
-            <Authentication openAuth={openAuth} setOpenAuth={setOpenAuth} />
-          )}
-          {open && (
-            <ToastMessage open={open} message={message} severity={severity} />
-          )}
-        </Container>
-      </BrowserRouter>
-    </ThemeProvider>
+    <TemplateProvider>
+      <ContextProvider>
+        <BrowserRouter>
+          <Header />
+          <Box style={{marginTop: 54}}>
+            <Routes>
+              <Route path= '/' element={<Home />} />
+              <Route path= '/cart' element={<Cart />} />
+              <Route path= '/product/:id' element={<DetailView />} />
+            </Routes>
+          </Box>
+        </BrowserRouter>
+      </ContextProvider>
+    </TemplateProvider>
   );
 }
 
